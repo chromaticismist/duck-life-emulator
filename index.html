@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Ruffle Flash Game</title>
 
-    <!-- Ruffle -->
     <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
 
     <style>
@@ -14,7 +13,6 @@
             background: #111;
         }
 
-        /* Game container fills screen */
         #flash-container {
             width: 100vw;
             height: 100vh;
@@ -23,11 +21,9 @@
             align-items: center;
         }
 
-        /* Fullscreen button */
-        #fsBtn {
+        .btn {
             position: fixed;
             top: 10px;
-            right: 10px;
             z-index: 9999;
             padding: 10px 14px;
             background: #222;
@@ -36,7 +32,15 @@
             cursor: pointer;
         }
 
-        #fsBtn:hover {
+        #fsBtn {
+            right: 10px;
+        }
+
+        #exitBtn {
+            right: 120px;
+        }
+
+        .btn:hover {
             background: #333;
         }
     </style>
@@ -44,7 +48,8 @@
 
 <body>
 
-    <button id="fsBtn">Fullscreen</button>
+    <button id="fsBtn" class="btn">Fullscreen</button>
+    <button id="exitBtn" class="btn">Exit</button>
 
     <div id="flash-container"></div>
 
@@ -54,13 +59,11 @@
         const ruffle = window.RufflePlayer.newest();
         const player = ruffle.createPlayer();
 
-        const container = document.getElementById("flash-container");
-        container.appendChild(player);
+        document.getElementById("flash-container").appendChild(player);
 
-        // Load your SWF file
         player.load("duck-life.swf");
 
-        // --- Fullscreen function ---
+        // --- Fullscreen ---
         function goFullscreen() {
             const elem = document.documentElement;
 
@@ -73,9 +76,21 @@
             }
         }
 
-        document.getElementById("fsBtn").addEventListener("click", goFullscreen);
+        // --- Exit fullscreen ---
+        function exitFullscreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
 
-        // --- Resize fix when fullscreen changes ---
+        document.getElementById("fsBtn").addEventListener("click", goFullscreen);
+        document.getElementById("exitBtn").addEventListener("click", exitFullscreen);
+
+        // --- Keep scaling smooth ---
         document.addEventListener("fullscreenchange", () => {
             player.style.width = "100%";
             player.style.height = "100%";

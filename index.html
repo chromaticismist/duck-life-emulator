@@ -1,101 +1,94 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Ruffle Flash Game</title>
+<meta charset="UTF-8">
+<title>Tab Website</title>
 
-    <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #111;
+  color: white;
+}
 
-    <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: #111;
-        }
+/* Hide radio buttons */
+input[type="radio"] {
+  display: none;
+}
 
-        #flash-container {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+/* Tab buttons */
+.tabs {
+  display: flex;
+  background: #222;
+}
 
-        .btn {
-            position: fixed;
-            top: 10px;
-            z-index: 9999;
-            padding: 10px 14px;
-            background: #222;
-            color: white;
-            border: 1px solid #555;
-            cursor: pointer;
-        }
+.tabs label {
+  padding: 15px 20px;
+  cursor: pointer;
+  flex: 1;
+  text-align: center;
+  background: #333;
+  transition: 0.2s;
+}
 
-        #fsBtn {
-            right: 10px;
-        }
+.tabs label:hover {
+  background: #444;
+}
 
-        #exitBtn {
-            right: 120px;
-        }
+/* Content areas */
+.content {
+  display: none;
+  padding: 20px;
+  background: #181818;
+  min-height: 200px;
+}
 
-        .btn:hover {
-            background: #333;
-        }
-    </style>
+/* Show active tab */
+#tab1:checked ~ .content1,
+#tab2:checked ~ .content2,
+#tab3:checked ~ .content3 {
+  display: block;
+}
+
+/* Highlight active tab */
+#tab1:checked ~ .tabs label[for="tab1"],
+#tab2:checked ~ .tabs label[for="tab2"],
+#tab3:checked ~ .tabs label[for="tab3"] {
+  background: #555;
+}
+</style>
 </head>
 
 <body>
 
-    <button id="fsBtn" class="btn">Fullscreen</button>
-    <button id="exitBtn" class="btn">Exit</button>
+<!-- Radio controls -->
+<input type="radio" name="tabs" id="tab1" checked>
+<input type="radio" name="tabs" id="tab2">
+<input type="radio" name="tabs" id="tab3">
 
-    <div id="flash-container"></div>
+<!-- Tab buttons -->
+<div class="tabs">
+  <label for="tab1">Home</label>
+  <label for="tab2">About</label>
+  <label for="tab3">Games</label>
+</div>
 
-    <script>
-        // --- Ruffle setup ---
-        window.RufflePlayer = window.RufflePlayer || {};
-        const ruffle = window.RufflePlayer.newest();
-        const player = ruffle.createPlayer();
+<!-- Tab content -->
+<div class="content content1">
+  <h2>🏠 Home</h2>
+  <p>Welcome to your tabbed website!</p>
+</div>
 
-        document.getElementById("flash-container").appendChild(player);
+<div class="content content2">
+  <h2>ℹ️ About</h2>
+  <p>This website uses HTML + CSS tabs with no JavaScript.</p>
+</div>
 
-        player.load("duck-life.swf");
-
-        // --- Fullscreen ---
-        function goFullscreen() {
-            const elem = document.documentElement;
-
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen();
-            } else if (elem.webkitRequestFullscreen) {
-                elem.webkitRequestFullscreen();
-            } else if (elem.msRequestFullscreen) {
-                elem.msRequestFullscreen();
-            }
-        }
-
-        // --- Exit fullscreen ---
-        function exitFullscreen() {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            }
-        }
-
-        document.getElementById("fsBtn").addEventListener("click", goFullscreen);
-        document.getElementById("exitBtn").addEventListener("click", exitFullscreen);
-
-        // --- Keep scaling smooth ---
-        document.addEventListener("fullscreenchange", () => {
-            player.style.width = "100%";
-            player.style.height = "100%";
-        });
-    </script>
+<div class="content content3">
+  <h2>🎮 Games</h2>
+  <p>Put your games or embeds here.</p>
+</div>
 
 </body>
 </html>

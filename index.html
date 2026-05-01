@@ -96,21 +96,22 @@
       border-radius: 6px;
     }
 
-    #ruffle-player, #unity-frame {
+    #ruffle-player,
+    #unity-frame {
       width: 100%;
       height: 100%;
+      border: none;
     }
 
     #unity-frame {
       display: none;
-      border: none;
     }
   </style>
 </head>
 
 <body>
 
-<!-- 🧭 TABS -->
+<!-- 🧭 TOP TABS -->
 <div class="tabs">
   <button class="tab-button active" onclick="openTab('home', this)">Home</button>
   <button class="tab-button" onclick="openTab('games', this)">Games</button>
@@ -121,36 +122,37 @@
 <!-- 🏠 HOME -->
 <div id="home" class="tab-content active">
   <h2>Home</h2>
-  <p>beginner at html tries to make a game website and you are using it right now</p>
+  <p>beginner at html building a game site 🎮</p>
 </div>
 
 <!-- 🎮 GAMES -->
 <div id="games" class="tab-content">
   <div class="games-layout">
 
-    <!-- SIDE NAV -->
+    <!-- SIDE MENU -->
     <div class="side-panel">
       <button onclick="showScreen('menu')">Menu</button>
       <button onclick="showScreen('play')">Play</button>
       <button onclick="showScreen('settings')">Settings</button>
     </div>
 
-    <!-- MAIN -->
+    <!-- MAIN PANEL -->
     <div class="main-panel">
 
-      <!-- 🎮 MENU -->
+      <!-- MENU -->
       <div id="menu-screen" class="screen active">
         <h2>Games Menu</h2>
-        <p>Select a game</p>
 
         <button onclick="loadGame('duck-life.swf')">Duck Life 1</button>
         <button onclick="loadGame('ducklife2worldchampion.swf')">Duck Life 2</button>
         <button onclick="loadGame('Duck Life 3 - Evolution.swf')">Duck Life 3</button>
         <button onclick="loadGame('duck-life-4_20210406.swf')">Duck Life 4</button>
+        <button onclick="loadGame('duck-life-treasure-hunt.swf')">Duck Life 5</button>
         <button onclick="loadGame('ducklife6')">Duck Life 6 (Space)</button>
+
       </div>
 
-      <!-- 🕹️ PLAY -->
+      <!-- PLAY -->
       <div id="play-screen" class="screen">
         <h2>Play</h2>
 
@@ -158,27 +160,29 @@
           <div id="ruffle-player"></div>
           <iframe id="unity-frame"></iframe>
         </div>
+
       </div>
 
-      <!-- ⚙️ SETTINGS -->
+      <!-- SETTINGS -->
       <div id="settings-screen" class="screen">
         <h2>Settings</h2>
-        <p>Adjust settings ⚙️</p>
+        <p>adjust things ⚙️</p>
       </div>
 
     </div>
-
   </div>
 </div>
 
-<!-- ℹ️ ABOUT -->
+<!-- ABOUT -->
 <div id="about" class="tab-content">
   <h2>About</h2>
 </div>
 
 <script>
+
 let player = null;
 
+// 🧭 TAB SYSTEM
 function openTab(tabName, btn) {
   document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
   document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
@@ -187,38 +191,42 @@ function openTab(tabName, btn) {
   btn.classList.add("active");
 }
 
+// 🌙 DARK MODE
 function toggleDarkMode() {
   document.body.classList.toggle("dark");
 }
 
+// 🎮 SCREEN SWITCH
 function showScreen(screenName) {
   document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
   document.getElementById(screenName + "-screen").classList.add("active");
 }
 
-/* 🎮 LOAD GAME */
+// 🎮 GAME LOADER
 function loadGame(file) {
   const ruffleContainer = document.getElementById("ruffle-player");
   const unityFrame = document.getElementById("unity-frame");
 
-  // 🚀 Duck Life 6 (Unity via CDN)
+  // reset
+  unityFrame.style.display = "none";
+  ruffleContainer.style.display = "block";
+
+  // 🚀 UNITY GAME (Duck Life 6)
   if (file === "ducklife6") {
     ruffleContainer.style.display = "none";
     unityFrame.style.display = "block";
 
-    unityFrame.src = "https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@dfa34cd79508c1af7e83c42fdfdf0340260e1638/duck%20life%206/";
+    unityFrame.src =
+      "https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@dfa34cd79508c1af7e83c42fdfdf0340260e1638/duck%20life%206/";
 
     showScreen("play");
     return;
   }
 
-  // 🦆 Flash games (Ruffle)
-  unityFrame.style.display = "none";
-  ruffleContainer.style.display = "block";
-
+  // 🦆 RUFFLE GAMES
   const ruffle = window.RufflePlayer?.newest?.();
   if (!ruffle) {
-    console.error("Ruffle failed to load");
+    console.error("Ruffle not loaded");
     return;
   }
 
@@ -231,6 +239,7 @@ function loadGame(file) {
 
   showScreen("play");
 }
+
 </script>
 
 </body>

@@ -8,7 +8,7 @@
       font-family: Arial;
       background: white;
       color: black;
-      transition: background 0.4s ease, color 0.4s ease;
+      transition: 0.4s;
     }
 
     body.dark {
@@ -21,7 +21,6 @@
       background: #ddd;
       border: none;
       cursor: pointer;
-      transition: 0.3s;
       margin: 5px 0;
     }
 
@@ -40,7 +39,6 @@
       background: #ddd;
       border: none;
       cursor: pointer;
-      transition: 0.4s;
     }
 
     .tab-button.active {
@@ -48,17 +46,11 @@
       color: white;
     }
 
-    body.dark .tab-button.active {
-      background: #0088FF;
-      color: black;
-    }
-
     .tab-content {
       display: none;
       padding: 20px;
       border: 1px solid #ccc;
       margin-top: 10px;
-      transition: 0.4s;
     }
 
     .tab-content.active {
@@ -70,33 +62,22 @@
       border-color: #333;
     }
 
-    /* 🎮 GAME LAYOUT */
+    /* 🎮 layout */
     .games-layout {
       display: flex;
       gap: 10px;
     }
 
     .side-panel {
-      display: flex;
-      flex-direction: column;
-      width: 160px;
+      width: 180px;
     }
 
     .main-panel {
       flex: 1;
-      border: 1px solid #ccc;
       padding: 10px;
+      border: 1px solid #ccc;
     }
 
-    .screen {
-      display: none;
-    }
-
-    .screen.active {
-      display: block;
-    }
-
-    /* 🎯 GAME AREA FIXED */
     .placeholder {
       aspect-ratio: 550 / 400;
       width: 100%;
@@ -107,80 +88,48 @@
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      border-radius: 6px;
     }
 
     #ruffle-player {
       width: 100%;
       height: 100%;
     }
-
-    #ruffle-player > * {
-      width: 100%;
-      height: 100%;
-    }
-
-    .mode-toggle {
-      height: 50px;
-      background: #ddd;
-    }
   </style>
 </head>
 
 <body>
 
-<!-- 🧭 TOP TABS -->
+<!-- 🧭 TABS -->
 <div class="tabs">
   <button class="tab-button active" onclick="openTab('home', this)">Home</button>
   <button class="tab-button" onclick="openTab('games', this)">Games</button>
   <button class="tab-button" onclick="openTab('about', this)">About</button>
-  <button class="mode-toggle" onclick="toggleDarkMode()">Dark Mode</button>
 </div>
 
 <!-- 🏠 HOME -->
 <div id="home" class="tab-content active">
   <h2>Home</h2>
-  <p>Welcome 🌟</p>
 </div>
 
 <!-- 🎮 GAMES -->
 <div id="games" class="tab-content">
   <div class="games-layout">
 
-    <!-- SIDE MENU -->
+    <!-- 🧭 MENU (NOW FULL GAME SELECTOR) -->
     <div class="side-panel">
-      <h3>Games</h3>
+      <h3>Menu</h3>
 
       <button onclick="loadGame('duck-life.swf')">Duck Life 1</button>
-      <button onclick="loadGame('duck-life-2.swf')">Duck Life 2</button>
+      <button onclick="loadGame('ducklife2worldchampion.swf')">Duck Life 2</button>
 
-      <hr>
-
-      <button onclick="showScreen('menu')">Menu</button>
-      <button onclick="showScreen('play')">Play</button>
-      <button onclick="showScreen('settings')">Settings</button>
     </div>
 
-    <!-- MAIN PANEL -->
+    <!-- 🕹️ PLAY AREA -->
     <div class="main-panel">
+      <h2>Play Screen</h2>
 
-      <div id="menu-screen" class="screen active">
-        <h2>Game Menu</h2>
-        <p>Select a game from the left 🎮</p>
-      </div>
-
-      <div id="play-screen" class="screen">
-        <h2>Play</h2>
-
-        <div class="placeholder">
-          <div id="ruffle-player"></div>
-        </div>
-
-      </div>
-
-      <div id="settings-screen" class="screen">
-        <h2>Settings</h2>
-        <p>Adjust game settings ⚙️</p>
+      <div class="placeholder">
+        <div id="ruffle-player"></div>
       </div>
 
     </div>
@@ -191,54 +140,35 @@
 <!-- ℹ️ ABOUT -->
 <div id="about" class="tab-content">
   <h2>About</h2>
-  <p>This is the about tab 🧠</p>
 </div>
 
 <script>
 let player = null;
 
 function openTab(tabName, btn) {
-  let contents = document.querySelectorAll(".tab-content");
-  contents.forEach(tab => tab.classList.remove("active"));
-
-  let buttons = document.querySelectorAll(".tab-button");
-  buttons.forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
 
   document.getElementById(tabName).classList.add("active");
   btn.classList.add("active");
 }
 
-function toggleDarkMode() {
-  document.body.classList.toggle("dark");
-}
-
-function showScreen(screenName) {
-  let screens = document.querySelectorAll(".screen");
-  screens.forEach(s => s.classList.remove("active"));
-
-  document.getElementById(screenName + "-screen").classList.add("active");
-}
-
-/* 🎮 RUFFLE GAME LOADER */
+/* 🎮 LOAD GAME DIRECTLY FROM MENU */
 function loadGame(file) {
   const container = document.getElementById("ruffle-player");
 
   const ruffle = window.RufflePlayer?.newest?.();
   if (!ruffle) {
-    console.error("Ruffle failed to load");
+    console.error("Ruffle not loaded");
     return;
   }
 
-  // create player once
   if (!player) {
     player = ruffle.createPlayer();
     container.appendChild(player);
   }
 
   player.load("./" + file);
-
-  // auto switch to play screen
-  showScreen('play');
 }
 </script>
 

@@ -22,6 +22,7 @@
       border: none;
       cursor: pointer;
       transition: 0.3s;
+      margin: 5px 0;
     }
 
     body.dark button {
@@ -78,8 +79,7 @@
     .side-panel {
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      width: 150px;
+      width: 160px;
     }
 
     .main-panel {
@@ -96,11 +96,11 @@
       display: block;
     }
 
-    /* 🎯 FIXED GAME CONTAINER */
+    /* 🎯 GAME AREA FIXED */
     .placeholder {
       aspect-ratio: 550 / 400;
-      max-width: 700px;
       width: 100%;
+      max-width: 700px;
       margin: auto;
       background: black;
       display: flex;
@@ -113,7 +113,6 @@
     #ruffle-player {
       width: 100%;
       height: 100%;
-      display: block;
     }
 
     #ruffle-player > * {
@@ -150,6 +149,13 @@
 
     <!-- SIDE MENU -->
     <div class="side-panel">
+      <h3>Games</h3>
+
+      <button onclick="loadGame('duck-life.swf')">Duck Life 1</button>
+      <button onclick="loadGame('duck-life-2.swf')">Duck Life 2</button>
+
+      <hr>
+
       <button onclick="showScreen('menu')">Menu</button>
       <button onclick="showScreen('play')">Play</button>
       <button onclick="showScreen('settings')">Settings</button>
@@ -159,8 +165,8 @@
     <div class="main-panel">
 
       <div id="menu-screen" class="screen active">
-        <h2>Games Menu</h2>
-        <p>Select a mode 🎮</p>
+        <h2>Game Menu</h2>
+        <p>Select a game from the left 🎮</p>
       </div>
 
       <div id="play-screen" class="screen">
@@ -189,6 +195,8 @@
 </div>
 
 <script>
+let player = null;
+
 function openTab(tabName, btn) {
   let contents = document.querySelectorAll(".tab-content");
   contents.forEach(tab => tab.classList.remove("active"));
@@ -209,29 +217,28 @@ function showScreen(screenName) {
   screens.forEach(s => s.classList.remove("active"));
 
   document.getElementById(screenName + "-screen").classList.add("active");
-
-  if (screenName === "play") {
-    loadGame();
-  }
 }
 
-/* 🕹️ RUFFLE LOADER */
-function loadGame() {
+/* 🎮 RUFFLE GAME LOADER */
+function loadGame(file) {
   const container = document.getElementById("ruffle-player");
 
-  if (container.children.length > 0) return;
-
   const ruffle = window.RufflePlayer?.newest?.();
-
   if (!ruffle) {
     console.error("Ruffle failed to load");
     return;
   }
 
-  const player = ruffle.createPlayer();
-  container.appendChild(player);
+  // create player once
+  if (!player) {
+    player = ruffle.createPlayer();
+    container.appendChild(player);
+  }
 
-  player.load("./duck-life.swf");
+  player.load("./" + file);
+
+  // auto switch to play screen
+  showScreen('play');
 }
 </script>
 

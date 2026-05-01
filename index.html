@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+  <!-- ✅ Correct Ruffle build -->
+  <script src="https://unpkg.com/@ruffle-rs/ruffle/ruffle.js"></script>
+
   <style>
     body {
       font-family: Arial;
@@ -68,7 +70,7 @@
       border-color: #333;
     }
 
-    /* GAME LAYOUT */
+    /* 🎮 GAME LAYOUT */
     .games-layout {
       display: flex;
       gap: 10px;
@@ -96,7 +98,7 @@
     }
 
     .placeholder {
-      height: 200px;
+      height: 300px;
       background: #eee;
       display: flex;
       align-items: center;
@@ -116,7 +118,7 @@
 
 <body>
 
-<!-- TOP TABS -->
+<!-- 🧭 TOP TABS -->
 <div class="tabs">
   <button class="tab-button active" onclick="openTab('home', this)">Home</button>
   <button class="tab-button" onclick="openTab('games', this)">Games</button>
@@ -124,13 +126,13 @@
   <button class="mode-toggle" onclick="toggleDarkMode()">Dark Mode</button>
 </div>
 
-<!-- HOME -->
+<!-- 🏠 HOME -->
 <div id="home" class="tab-content active">
   <h2>Home</h2>
   <p>Welcome 🌟</p>
 </div>
 
-<!-- GAMES (FIXED SINGLE VERSION) -->
+<!-- 🎮 GAMES -->
 <div id="games" class="tab-content">
   <div class="games-layout">
 
@@ -141,19 +143,21 @@
       <button onclick="showScreen('settings')">Settings</button>
     </div>
 
-    <!-- MAIN AREA -->
+    <!-- MAIN PANEL -->
     <div class="main-panel">
 
       <div id="menu-screen" class="screen active">
         <h2>Games Menu</h2>
-        <p>Select an option 🎮</p>
+        <p>Select a mode 🎮</p>
       </div>
 
       <div id="play-screen" class="screen">
-        <h2>Play Screen</h2>
+        <h2>Play</h2>
+
         <div class="placeholder">
-  <div id="ruffle-player"></div>
-</div>
+          <div id="ruffle-player"></div>
+        </div>
+
       </div>
 
       <div id="settings-screen" class="screen">
@@ -166,7 +170,7 @@
   </div>
 </div>
 
-<!-- ABOUT -->
+<!-- ℹ️ ABOUT -->
 <div id="about" class="tab-content">
   <h2>About</h2>
   <p>This is the about tab 🧠</p>
@@ -193,19 +197,31 @@ function showScreen(screenName) {
   screens.forEach(s => s.classList.remove("active"));
 
   document.getElementById(screenName + "-screen").classList.add("active");
+
+  // 🎮 auto-load game when entering play screen
+  if (screenName === "play") {
+    loadGame();
+  }
 }
-</script>
-  <script>
+
+/* 🕹️ RUFFLE LOADER */
 function loadGame() {
   const container = document.getElementById("ruffle-player");
 
   // prevent duplicates
   if (container.children.length > 0) return;
 
-  const ruffle = window.RufflePlayer.newest();
-  const player = ruffle.createPlayer();
+  const ruffle = window.RufflePlayer?.newest?.();
 
+  if (!ruffle) {
+    console.error("Ruffle failed to load");
+    return;
+  }
+
+  const player = ruffle.createPlayer();
   container.appendChild(player);
+
+  // 🎯 your SWF file
   player.load("./duck-life.swf");
 }
 </script>

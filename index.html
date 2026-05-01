@@ -1,148 +1,210 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Tabbed Website</title>
+  <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+  <style>
+    body {
+      font-family: Arial;
+      background: white;
+      color: black;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background: #111;
-  color: white;
-}
+    body.dark {
+      background: #121212;
+      color: #f1f1f1;
+    }
 
-/* Hide radio buttons */
-input[type="radio"] {
-  display: none;
-}
+    button {
+      padding: 10px 15px;
+      background: #ddd;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
 
-/* Tabs bar */
-.tabs {
-  display: flex;
-  background: #222;
-}
+    body.dark button {
+      background: #333;
+      color: #f1f1f1;
+    }
 
-.tabs label {
-  padding: 15px;
-  cursor: pointer;
-  flex: 1;
-  text-align: center;
-  background: #333;
-  transition: 0.2s;
-}
+    .tabs {
+      display: flex;
+      gap: 5px;
+    }
 
-.tabs label:hover {
-  background: #444;
-}
+    .tab-button {
+      height: 50px;
+      background: #ddd;
+      border: none;
+      cursor: pointer;
+      transition: 0.4s;
+    }
 
-/* Content sections */
-.content {
-  display: none;
-  padding: 20px;
-  min-height: 300px;
-  background: #181818;
-}
+    .tab-button.active {
+      background: orange;
+      color: white;
+    }
 
-/* Show active tab */
-#tab1:checked ~ .content1,
-#tab2:checked ~ .content2,
-#tab3:checked ~ .content3 {
-  display: block;
-}
+    body.dark .tab-button.active {
+      background: #0088FF;
+      color: black;
+    }
 
-/* Active tab highlight */
-#tab1:checked ~ .tabs label[for="tab1"],
-#tab2:checked ~ .tabs label[for="tab2"],
-#tab3:checked ~ .tabs label[for="tab3"] {
-  background: #555;
-}
+    .tab-content {
+      display: none;
+      padding: 20px;
+      border: 1px solid #ccc;
+      margin-top: 10px;
+      transition: 0.4s;
+    }
 
-/* Container boxes */
-.box {
-  background: #222;
-  padding: 15px;
-  margin: 12px 0;
-  border-radius: 10px;
-  border: 1px solid #333;
-}
-</style>
+    .tab-content.active {
+      display: block;
+    }
+
+    body.dark .tab-content {
+      background: #1e1e1e;
+      border-color: #333;
+    }
+
+    /* GAME LAYOUT */
+    .games-layout {
+      display: flex;
+      gap: 10px;
+    }
+
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 150px;
+    }
+
+    .main-panel {
+      flex: 1;
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .placeholder {
+      height: 200px;
+      background: #eee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    body.dark .placeholder {
+      background: #2a2a2a;
+    }
+
+    .mode-toggle {
+      height: 50px;
+      background: #ddd;
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- Tab controls -->
-<input type="radio" name="tabs" id="tab1" checked>
-<input type="radio" name="tabs" id="tab2">
-<input type="radio" name="tabs" id="tab3">
-
-<!-- Tab buttons -->
+<!-- TOP TABS -->
 <div class="tabs">
-  <label for="tab1">Home</label>
-  <label for="tab2">About</label>
-  <label for="tab3">Games</label>
+  <button class="tab-button active" onclick="openTab('home', this)">Home</button>
+  <button class="tab-button" onclick="openTab('games', this)">Games</button>
+  <button class="tab-button" onclick="openTab('about', this)">About</button>
+  <button class="mode-toggle" onclick="toggleDarkMode()">Dark Mode</button>
 </div>
 
-<!-- TAB 1 -->
-<div class="content content1">
-  <h2>🏠 Home</h2>
+<!-- HOME -->
+<div id="home" class="tab-content active">
+  <h2>Home</h2>
+  <p>Welcome 🌟</p>
+</div>
 
-  <div class="box">
-    <h3>Welcome</h3>
-    <p>This is your main landing page.</p>
-  </div>
+<!-- GAMES (FIXED SINGLE VERSION) -->
+<div id="games" class="tab-content">
+  <div class="games-layout">
 
-  <div class="box">
-    <h3>Updates</h3>
-    <p>New features will appear here.</p>
-  </div>
+    <!-- SIDE MENU -->
+    <div class="side-panel">
+      <button onclick="showScreen('menu')">Menu</button>
+      <button onclick="showScreen('play')">Play</button>
+      <button onclick="showScreen('settings')">Settings</button>
+    </div>
 
-  <div class="box">
-    <h3>Status</h3>
-    <p>All systems running smoothly ⚡</p>
+    <!-- MAIN AREA -->
+    <div class="main-panel">
+
+      <div id="menu-screen" class="screen active">
+        <h2>Games Menu</h2>
+        <p>Select an option 🎮</p>
+      </div>
+
+      <div id="play-screen" class="screen">
+        <h2>Play Screen</h2>
+        <div class="placeholder">
+  <div id="ruffle-player"></div>
+</div>
+      </div>
+
+      <div id="settings-screen" class="screen">
+        <h2>Settings</h2>
+        <p>Adjust game settings ⚙️</p>
+      </div>
+
+    </div>
+
   </div>
 </div>
 
-<!-- TAB 2 -->
-<div class="content content2">
-  <h2>ℹ️ About</h2>
-
-  <div class="box">
-    <h3>What this is</h3>
-    <p>A simple tabbed website using only HTML + CSS.</p>
-  </div>
-
-  <div class="box">
-    <h3>How it works</h3>
-    <p>Radio buttons control which section is visible.</p>
-  </div>
-
-  <div class="box">
-    <h3>Expandable idea</h3>
-    <p>You can embed images, videos, or even games here.</p>
-  </div>
+<!-- ABOUT -->
+<div id="about" class="tab-content">
+  <h2>About</h2>
+  <p>This is the about tab 🧠</p>
 </div>
 
-<!-- TAB 3 -->
-<div class="content content3">
-  <h2>🎮 Games</h2>
+<script>
+function openTab(tabName, btn) {
+  let contents = document.querySelectorAll(".tab-content");
+  contents.forEach(tab => tab.classList.remove("active"));
 
-  <div class="box">
-    <h3>Game Slot 1</h3>
-    <p>Embed your Ruffle SWF or iframe here.</p>
-    <button>Play</button>
-  </div>
+  let buttons = document.querySelectorAll(".tab-button");
+  buttons.forEach(b => b.classList.remove("active"));
 
-  <div class="box">
-    <h3>Game Slot 2</h3>
-    <p>Another game container.</p>
-  </div>
+  document.getElementById(tabName).classList.add("active");
+  btn.classList.add("active");
+}
 
-  <div class="box">
-    <h3>Info</h3>
-    <p>This tab can become your game launcher hub.</p>
-  </div>
-</div>
+function toggleDarkMode() {
+  document.body.classList.toggle("dark");
+}
+
+function showScreen(screenName) {
+  let screens = document.querySelectorAll(".screen");
+  screens.forEach(s => s.classList.remove("active"));
+
+  document.getElementById(screenName + "-screen").classList.add("active");
+}
+</script>
+  <script>
+function loadGame() {
+  const ruffle = window.RufflePlayer.newest();
+  const player = ruffle.createPlayer();
+
+  document.getElementById("ruffle-player").appendChild(player);
+
+  player.load("duck-life.swf");
+}
+</script>
 
 </body>
 </html>

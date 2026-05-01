@@ -197,12 +197,16 @@ function showScreen(screenName) {
 </script>
   <script>
 function loadGame() {
+  const container = document.getElementById("ruffle-player");
+
+  // prevent duplicates
+  if (container.children.length > 0) return;
+
   const ruffle = window.RufflePlayer.newest();
   const player = ruffle.createPlayer();
 
-  document.getElementById("ruffle-player").appendChild(player);
-
-  player.load("duck-life.swf");
+  container.appendChild(player);
+  player.load("./duck-life.swf");
 }
 </script>
 

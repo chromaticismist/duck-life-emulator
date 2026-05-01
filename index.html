@@ -5,10 +5,6 @@
   <script src="https://unpkg.com/@ruffle-rs/ruffle/ruffle.js"></script>
 
   <style>
-    #ruffle-player {
-  width: 550px;
-  height: 400px;
-  margin: auto;
     }
     body {
       font-family: Arial;
@@ -103,13 +99,17 @@
     }
 
     .placeholder {
-      height: 300px;
-      background: #eee;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+  aspect-ratio: 550 / 400;
+  max-width: 700px;
+  width: 100%;
+  margin: auto;
+  background: #000;
+}
 
+#ruffle-player {
+  width: 100%;
+  height: 100%;
+}
     body.dark .placeholder {
       background: #2a2a2a;
     }

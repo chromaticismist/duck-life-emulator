@@ -1,243 +1,209 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <script src="https://unpkg.com/@ruffle-rs/ruffle/ruffle.js"></script>
+<!DOCTYPE html>  <html>  
+<head>  
+  <script src="https://unpkg.com/@ruffle-rs/ruffle/ruffle.js"></script>    <style>  
+    body {  
+      font-family: Arial;  
+      background: white;  
+      color: black;  
+      transition: 0.4s;  
+    }  
+  
+    body.dark {  
+      background: #121212;  
+      color: #f1f1f1;  
+    }  
+  
+    button {  
+      padding: 10px 15px;  
+      background: #ddd;  
+      border: none;  
+      cursor: pointer;  
+      margin: 5px 0;  
+    }  
+  
+    body.dark button {  
+      background: #333;  
+      color: #f1f1f1;  
+    }  
+  
+    .tabs {  
+      display: flex;  
+      gap: 5px;  
+    }  
+  
+    .tab-button {  
+      height: 50px;  
+      background: #ddd;  
+      border: none;  
+      cursor: pointer;  
+    }  
+  
+    .tab-button.active {  
+      background: orange;  
+      color: white;  
+    }  
+  
+    body.dark .tab-button.active {  
+      background: #0088FF;  
+      color: black;  
+    }  
+  
+    .tab-content {  
+      display: none;  
+      padding: 20px;  
+      border: 1px solid #ccc;  
+      margin-top: 10px;  
+    }  
+  
+    .tab-content.active {  
+      display: block;  
+    }  
+  
+    body.dark .tab-content {  
+      background: #1e1e1e;  
+      border-color: #333;  
+    }  
+  
+    /* 🎮 layout */  
+    .games-layout {  
+      display: flex;  
+      gap: 10px;  
+    }  
+  
+    .side-panel {  
+      display: flex;  
+      flex-direction: column;  
+      gap: 10px;  
+      width: 150px;  
+    }  
+  
+    .main-panel {  
+      flex: 1;  
+      border: 1px solid #ccc;  
+      padding: 10px;  
+    }  
+  
+    .screen {  
+      display: none;  
+    }  
+  
+    .screen.active {  
+      display: block;  
+    }  
+  
+    /* 🎯 game screen */  
+    .placeholder {  
+      aspect-ratio: 550 / 400;  
+      max-width: 700px;  
+      width: 100%;  
+      margin: auto;  
+      background: black;  
+      display: flex;  
+      align-items: center;  
+      justify-content: center;  
+      overflow: hidden;  
+      border-radius: 6px;  
+    }  
+  
+    #ruffle-player {  
+      width: 100%;  
+      height: 100%;  
+    }  
+  
+    #ruffle-player > * {  
+      width: 100%;  
+      height: 100%;  
+    }  
+  </style>  </head>  <body>  <!-- 🧭 TABS -->  <div class="tabs">  
+  <button class="tab-button active" onclick="openTab('home', this)">Home</button>  
+  <button class="tab-button" onclick="openTab('games', this)">Games</button>  
+  <button class="tab-button" onclick="openTab('about', this)">About</button>  
+  <button onclick="toggleDarkMode()">Dark Mode</button>  
+</div>  <!-- 🏠 HOME -->  <div id="home" class="tab-content active">  
+  <h2>Home</h2>  
+  <p>beginner at html tries to make a game website and you are using it right now</p>  
+</div>  <!-- 🎮 GAMES -->  <div id="games" class="tab-content">  
+  <div class="games-layout">  <!-- SIDE NAV -->  
+<div class="side-panel">  
+  <button onclick="showScreen('menu')">Menu</button>  
+  <button onclick="showScreen('play')">Play</button>  
+  <button onclick="showScreen('settings')">Settings</button>  
+</div>  
 
-  <style>
-    body {
-      font-family: Arial;
-      background: white;
-      color: black;
-      transition: 0.4s;
-    }
+<!-- MAIN AREA -->  
+<div class="main-panel">  
 
-    body.dark {
-      background: #121212;
-      color: #f1f1f1;
-    }
+  <!-- 🎮 MENU (GAME SELECTOR) -->  
+  <div id="menu-screen" class="screen active">  
+    <h2>Games Menu</h2>  
+    <p>Select a game</p>  
 
-    button {
-      padding: 10px 15px;
-      background: #ddd;
-      border: none;
-      cursor: pointer;
-      margin: 5px 0;
-    }
+    <button onclick="loadGame('duck-life.swf')">Duck Life 1</button>  
+    <button onclick="loadGame('ducklife2worldchampion.swf')">Duck Life 2</button>  
+    <button onclick="loadGame('Duck Life 3 - Evolution.swf')">Duck Life 3</button>  
+    <button onclick="loadGame('duck-life-4_20210406.swf')">Duck Life 4</button>  
+  </div>  
 
-    body.dark button {
-      background: #333;
-      color: #f1f1f1;
-    }
+  <!-- 🕹️ PLAY -->  
+  <div id="play-screen" class="screen">  
+    <h2>Play</h2>  
 
-    .tabs {
-      display: flex;
-      gap: 5px;
-    }
+    <div class="placeholder">  
+      <div id="ruffle-player"></div>  
+    </div>  
+  </div>  
 
-    .tab-button {
-      height: 50px;
-      background: #ddd;
-      border: none;
-      cursor: pointer;
-    }
+  <!-- ⚙️ SETTINGS -->  
+  <div id="settings-screen" class="screen">  
+    <h2>Settings</h2>  
+    <p>Adjust settings ⚙️</p>  
+  </div>  
 
-    .tab-button.active {
-      background: orange;
-      color: white;
-    }
-
-    .tab-content {
-      display: none;
-      padding: 20px;
-      border: 1px solid #ccc;
-      margin-top: 10px;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    /* 🎮 GAME LAYOUT */
-    .games-layout {
-      display: flex;
-      gap: 10px;
-    }
-
-    .side-panel {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      width: 150px;
-    }
-
-    .main-panel {
-      flex: 1;
-      border: 1px solid #ccc;
-      padding: 10px;
-    }
-
-    .screen {
-      display: none;
-    }
-
-    .screen.active {
-      display: block;
-    }
-
-    /* 🧱 FIXED GAME WINDOW (NO MORE STRETCH BUGS) */
-    .placeholder {
-      width: 700px;
-      height: 400px;
-      margin: auto;
-      background: black;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      border-radius: 6px;
-    }
-
-    #ruffle-player,
-    #unity-frame {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-
-    #unity-frame {
-      display: none;
-    }
-  </style>
-</head>
-
-<body>
-
-<!-- 🧭 TABS -->
-<div class="tabs">
-  <button class="tab-button active" onclick="openTab('home', this)">Home</button>
-  <button class="tab-button" onclick="openTab('games', this)">Games</button>
-  <button class="tab-button" onclick="openTab('about', this)">About</button>
-  <button onclick="toggleDarkMode()">Dark Mode</button>
 </div>
 
-<!-- 🏠 HOME -->
-<div id="home" class="tab-content active">
-  <h2>Home</h2>
-  <p>your beginner game site 🎮</p>
-</div>
-
-<!-- 🎮 GAMES -->
-<div id="games" class="tab-content">
-  <div class="games-layout">
-
-    <!-- SIDE MENU -->
-    <div class="side-panel">
-      <button onclick="showScreen('menu')">Menu</button>
-      <button onclick="showScreen('play')">Play</button>
-      <button onclick="showScreen('settings')">Settings</button>
-    </div>
-
-    <!-- MAIN -->
-    <div class="main-panel">
-
-      <!-- MENU -->
-      <div id="menu-screen" class="screen active">
-        <h2>Games Menu</h2>
-
-        <button onclick="loadGame('duck-life.swf')">Duck Life 1</button>
-        <button onclick="loadGame('ducklife2worldchampion.swf')">Duck Life 2</button>
-        <button onclick="loadGame('Duck Life 3 - Evolution.swf')">Duck Life 3</button>
-        <button onclick="loadGame('duck-life-4_20210406.swf')">Duck Life 4</button>
-        <button onclick="loadGame('duck-life-treasure-hunt.swf')">Duck Life 5</button>
-        <button onclick="loadGame('ducklife6')">Duck Life 6 (Space)</button>
-
-      </div>
-
-      <!-- PLAY -->
-      <div id="play-screen" class="screen">
-        <h2>Play</h2>
-
-        <div class="placeholder">
-          <div id="ruffle-player"></div>
-          <iframe id="unity-frame"></iframe>
-        </div>
-
-      </div>
-
-      <!-- SETTINGS -->
-      <div id="settings-screen" class="screen">
-        <h2>Settings</h2>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- ABOUT -->
-<div id="about" class="tab-content">
-  <h2>About</h2>
-</div>
-
-<script>
-
-let player = null;
-
-// 🧭 TAB SYSTEM
-function openTab(tabName, btn) {
-  document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
-  document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));
-
-  document.getElementById(tabName).classList.add("active");
-  btn.classList.add("active");
-}
-
-// 🌙 DARK MODE
-function toggleDarkMode() {
-  document.body.classList.toggle("dark");
-}
-
-// 🎮 SCREEN SWITCH
-function showScreen(screenName) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-  document.getElementById(screenName + "-screen").classList.add("active");
-}
-
-// 🎮 GAME LOADER
-function loadGame(file) {
-  const ruffleContainer = document.getElementById("ruffle-player");
-  const unityFrame = document.getElementById("unity-frame");
-
-  // reset both systems
-  unityFrame.style.display = "none";
-  ruffleContainer.style.display = "block";
-
-  // 🚀 UNITY GAME (Duck Life 6)
-  if (file === "ducklife6") {
-    ruffleContainer.style.display = "none";
-    unityFrame.style.display = "block";
-
-    unityFrame.src =
-      "https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@dfa34cd79508c1af7e83c42fdfdf0340260e1638/duck%20life%206/";
-
-    showScreen("play");
-    return;
-  }
-
-  // 🦆 RUFFLE GAMES
-  const ruffle = window.RufflePlayer?.newest?.();
-  if (!ruffle) return;
-
-  if (!player) {
-    player = ruffle.createPlayer();
-    ruffleContainer.appendChild(player);
-  }
-
-  player.load("./" + file);
-
-  showScreen("play");
-}
-
+  </div>  
+</div>  <!-- ℹ️ ABOUT -->  <div id="about" class="tab-content">  
+  <h2>About</h2>  
+</div>  <script>  
+let player = null;  
+  
+function openTab(tabName, btn) {  
+  document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));  
+  document.querySelectorAll(".tab-button").forEach(b => b.classList.remove("active"));  
+  
+  document.getElementById(tabName).classList.add("active");  
+  btn.classList.add("active");  
+}  
+  
+function toggleDarkMode() {  
+  document.body.classList.toggle("dark");  
+}  
+  
+function showScreen(screenName) {  
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));  
+  document.getElementById(screenName + "-screen").classList.add("active");  
+}  
+  
+/* 🎮 LOAD GAME FROM MENU */  
+function loadGame(file) {  
+  const container = document.getElementById("ruffle-player");  
+  
+  const ruffle = window.RufflePlayer?.newest?.();  
+  if (!ruffle) {  
+    console.error("Ruffle failed to load");  
+    return;  
+  }  
+  
+  if (!player) {  
+    player = ruffle.createPlayer();  
+    container.appendChild(player);  
+  }  
+  
+  player.load("./" + file);  
+  
+  // 🚀 switch to play screen  
+  showScreen("play");  
+}  
 </script>
-
-</body>
-</html>
+</body>  
+</html> 
